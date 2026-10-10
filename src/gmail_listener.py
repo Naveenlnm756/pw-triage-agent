@@ -110,6 +110,18 @@ def get_gmail_service():
     SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
     creds = None
     
+    # --- RAILWAY SUPPORT ---
+    # If deploying on Railway, we pass the raw JSON strings as environment variables
+    # because committing token.json to GitHub is insecure!
+    if os.environ.get("GOOGLE_CREDENTIALS_JSON") and not os.path.exists("credentials.json"):
+        with open("credentials.json", "w") as f:
+            f.write(os.environ.get("GOOGLE_CREDENTIALS_JSON"))
+            
+    if os.environ.get("GOOGLE_TOKEN_JSON") and not os.path.exists("token.json"):
+        with open("token.json", "w") as f:
+            f.write(os.environ.get("GOOGLE_TOKEN_JSON"))
+    # -----------------------
+
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     if not creds or not creds.valid:
